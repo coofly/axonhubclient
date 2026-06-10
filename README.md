@@ -2,6 +2,12 @@
 
 `AxonHubClient` 是用于管理 AxonHub 实例的 Python client 和命令行工具。它面向 AxonHub Admin API，通过 Admin Token 访问 `/admin/graphql`，用于盘点和管理渠道、模型、API Key / Profile、用量、请求日志、Trace 和诊断信息。
 
+## 上游项目：AxonHub
+
+[AxonHub](https://github.com/looplj/axonhub) 是一个开源 AI Gateway / AI 开发平台，目标是在不更换业务代码和 SDK 的前提下，把 OpenAI、Anthropic、Gemini 等不同模型供应商接入到统一网关中。它提供模型供应商切换、统一 API 入口、智能负载均衡、故障转移、用量与成本统计、请求追踪和后台管理等能力。
+
+本项目不替代 AxonHub 本体，而是围绕已有 AxonHub 实例提供可脚本化、可被 Agent 调用的管理层：通过命令行或 Python client 管理渠道、模型、API Key / Profile、用量和诊断信息。
+
 ## 适用场景
 
 - 查看 AxonHub 实例中的渠道、模型、用量和请求状态。
