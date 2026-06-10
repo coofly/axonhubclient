@@ -5,7 +5,7 @@ class AxonHubClientError(Exception):
     """Base error raised by AxonHubClient."""
 
 
-SESSION_RELOGIN_MESSAGE = "当前 session 已失效或权限不足，请重新运行 axonhubclient auth login。"
+SESSION_RELOGIN_MESSAGE = "当前 session 已失效或权限不足，请重新运行 axonhub-client auth login。"
 
 
 class ConfigurationError(AxonHubClientError):

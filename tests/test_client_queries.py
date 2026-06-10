@@ -146,7 +146,7 @@ class QuerySafetyAndSessionTest(unittest.TestCase):
 
     def test_missing_session_requires_login(self):
         with TempConfig():
-            with self.assertRaisesRegex(ConfigurationError, "请先运行 axonhubclient auth login"):
+            with self.assertRaisesRegex(ConfigurationError, "请先运行 axonhub-client auth login"):
                 load_session()
 
     def test_invalid_session_requires_complete_fields(self):
@@ -276,3 +276,4 @@ class QuerySafetyAndSessionTest(unittest.TestCase):
 
         self.assertEqual(code, 1)
         self.assertIn(SESSION_RELOGIN_MESSAGE, stderr.getvalue())
+

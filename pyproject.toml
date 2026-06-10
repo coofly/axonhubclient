@@ -3,8 +3,26 @@ name = "axonhub-client"
 version = "0.1.0"
 description = "AxonHub 管理操作客户端与 CLI"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
+authors = [
+  { name = "coofly" },
+]
+keywords = ["axonhub", "client", "cli", "admin", "graphql"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Utilities",
+]
 dependencies = [
   "requests>=2.32.0",
 ]
@@ -15,10 +33,15 @@ dev = [
 ]
 
 [project.scripts]
-axonhubclient = "axonhub_client.cli:main"
+axonhub-client = "axonhub_client.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/coofly/axonhubclient"
+Repository = "https://github.com/coofly/axonhubclient"
+Issues = "https://github.com/coofly/axonhubclient/issues"
 
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

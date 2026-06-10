@@ -1,0 +1,200 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  package:
+    name: Build Python package
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Ensure default branch
+        run: |
+          if [ "$GITHUB_REF_NAME" != "${{ github.event.repository.default_branch }}" ]; then
+            echo "Release must run from ${{ github.event.repository.default_branch }}." >&2
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --extra dev --frozen
+
+      - name: Run tests
+        run: uv run pytest
+
+      - name: Read package version
+        id: version
+        run: |
+          version="$(python -c 'import pathlib, tomllib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"])')"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Build package
+        run: uv build
+
+      - name: Upload Python dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: dist/*
+          if-no-files-found: error
+
+  windows-zip:
+    name: Build Windows x64 zip
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Ensure default branch
+        run: |
+          if ("${env:GITHUB_REF_NAME}" -ne "${{ github.event.repository.default_branch }}") {
+            Write-Error "Release must run from ${{ github.event.repository.default_branch }}."
+            exit 1
+          }
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          architecture: x64
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --extra dev --frozen
+
+      - name: Read package version
+        id: version
+        shell: pwsh
+        run: |
+          $version = python -c 'import pathlib, tomllib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"])'
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Build executable
+        run: uv run --with pyinstaller pyinstaller --name axonhub-client --console --onedir axonhub_client/__main__.py
+
+      - name: Add release notes to portable directory
+        shell: pwsh
+        run: |
+          Copy-Item -LiteralPath LICENSE -Destination dist\axonhub-client\LICENSE
+          @'
+          axonhub-client Windows 便携版
+
+          使用方式：
+          1. 解压 zip 到任意目录。
+          2. 在 PowerShell 或 cmd 中运行 axonhub-client.exe --help。
+          3. 首次使用运行 axonhub-client.exe auth login。
+
+          session 默认保存到 %APPDATA%\axonhub-client\session.json。
+          '@ | Set-Content -LiteralPath dist\axonhub-client\README-windows.txt -Encoding UTF8
+
+      - name: Smoke test executable
+        run: dist\axonhub-client\axonhub-client.exe --help
+
+      - name: Create zip
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $zip = "dist\axonhub-client-windows-x64-v$version.zip"
+          Compress-Archive -Path dist\axonhub-client\* -DestinationPath $zip -Force
+
+      - name: Smoke test zip
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $zip = "dist\axonhub-client-windows-x64-v$version.zip"
+          New-Item -ItemType Directory -Path smoke-zip | Out-Null
+          Expand-Archive -Path $zip -DestinationPath smoke-zip -Force
+          smoke-zip\axonhub-client.exe --help
+
+      - name: Upload Windows zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-zip
+          path: dist/axonhub-client-windows-x64-v*.zip
+          if-no-files-found: error
+
+  publish:
+    name: Publish release
+    runs-on: ubuntu-latest
+    needs: [package, windows-zip]
+    environment: pypi
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check release target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.package.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists." >&2
+            exit 1
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists." >&2
+            exit 1
+          fi
+
+      - name: Download Python dist
+        uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist
+
+      - name: Download Windows zip
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-zip
+          path: release-assets
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.package.outputs.tag }}
+          VERSION: ${{ needs.package.outputs.version }}
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" \
+            dist/* \
+            release-assets/* \
+            --target "$GITHUB_SHA" \
+            --title "axonhub-client $TAG" \
+            --notes "axonhub-client $VERSION release."

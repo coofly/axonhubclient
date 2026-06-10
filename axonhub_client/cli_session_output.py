@@ -15,6 +15,7 @@ from .exceptions import ConfigurationError
 
 
 SESSION_FILENAME = "session.json"
+APP_DIR_NAME = "axonhub-client"
 
 
 __all__ = [
@@ -47,16 +48,16 @@ def user_config_dir() -> Path:
     if os.name == "nt":
         appdata = os.getenv("APPDATA")
         if appdata:
-            return Path(appdata) / "AxonhubClient"
-        return Path.home() / "AppData" / "Roaming" / "AxonhubClient"
+            return Path(appdata) / APP_DIR_NAME
+        return Path.home() / "AppData" / "Roaming" / APP_DIR_NAME
 
     if sys.platform == "darwin":
-        return Path.home() / "Library" / "Application Support" / "AxonhubClient"
+        return Path.home() / "Library" / "Application Support" / APP_DIR_NAME
 
     xdg_config_home = os.getenv("XDG_CONFIG_HOME")
     if xdg_config_home:
-        return Path(xdg_config_home) / "axonhubclient"
-    return Path.home() / ".config" / "axonhubclient"
+        return Path(xdg_config_home) / APP_DIR_NAME
+    return Path.home() / ".config" / APP_DIR_NAME
 
 
 def session_path() -> Path:
@@ -66,7 +67,7 @@ def session_path() -> Path:
 def load_session(path: Path | None = None) -> dict[str, Any]:
     path = path or session_path()
     if not path.exists():
-        raise ConfigurationError(f"未找到 session 文件：{path}，请先运行 axonhubclient auth login。")
+        raise ConfigurationError(f"未找到 session 文件：{path}，请先运行 axonhub-client auth login。")
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except OSError as exc:
@@ -79,9 +80,9 @@ def load_session(path: Path | None = None) -> dict[str, Any]:
     base_url = data.get("baseUrl")
     token = data.get("token")
     if not isinstance(base_url, str) or not base_url.strip():
-        raise ConfigurationError("session 文件缺少 baseUrl，请重新运行 axonhubclient auth login。")
+        raise ConfigurationError("session 文件缺少 baseUrl，请重新运行 axonhub-client auth login。")
     if not isinstance(token, str) or not token.strip():
-        raise ConfigurationError("session 文件缺少 token，请重新运行 axonhubclient auth login。")
+        raise ConfigurationError("session 文件缺少 token，请重新运行 axonhub-client auth login。")
     _validate_login_base_url(base_url)
     return data
 

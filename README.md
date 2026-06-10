@@ -19,44 +19,47 @@
 
 ## 安装
 
-本项目使用 Python 3.10+。从源码目录安装开发依赖：
+推荐使用 `uv` 作为独立命令行工具安装：
+
+```bash
+uv tool install axonhub-client
+axonhub-client --help
+```
+
+升级和卸载：
+
+```bash
+uv tool upgrade axonhub-client
+uv tool uninstall axonhub-client
+```
+
+Windows 用户也可以从 GitHub Release 下载 `axonhub-client-windows-x64-vX.Y.Z.zip`，解压后直接运行：
 
 ```powershell
+.\axonhub-client.exe --help
+```
+
+从源码目录开发时：
+
+```bash
 uv sync --extra dev
+uv run axonhub-client --help
 ```
 
-运行 CLI：
-
-```powershell
-.venv\Scripts\axonhubclient.exe --help
-```
-
-也可以通过 `uv run` 调用：
-
-```powershell
-uv run axonhubclient --help
-```
-
-如需安装到当前用户工具环境：
-
-```powershell
-uv tool install --editable .
-```
-
-命令名为 `axonhubclient`；Windows 下为 `axonhubclient.exe`，macOS / Linux 下为 `axonhubclient`。
+命名约定：安装包、CLI 命令和发布产物使用 `axonhub-client`；Python import 包名使用 `axonhub_client`。
 
 ## 快速开始
 
 首次使用先登录 AxonHub 管理后台。登录成功后，CLI 会把默认 session 保存到当前用户配置目录；session 文件保存实例地址、token、用户摘要和保存时间，不保存密码。
 
 ```powershell
-axonhubclient auth login --url https://your-axonhub.example.com --username admin@example.com
+axonhub-client auth login --url https://your-axonhub.example.com --username admin@example.com
 ```
 
 上面的命令会继续提示输入密码，密码输入不会回显。需要非交互登录时，可以显式传入 `--password`：
 
 ```powershell
-axonhubclient auth login --url https://your-axonhub.example.com --username admin@example.com --password "your-password"
+axonhub-client auth login --url https://your-axonhub.example.com --username admin@example.com --password "your-password"
 ```
 
 `auth login` 也可以不传参数，按提示交互式输入实例地址、用户名和密码。
@@ -64,24 +67,24 @@ axonhubclient auth login --url https://your-axonhub.example.com --username admin
 常用盘点命令：
 
 ```powershell
-axonhubclient --json inventory summary
-axonhubclient --json channels list
-axonhubclient --json models list
-axonhubclient --json api-keys list --status enabled
-axonhubclient --json diagnostics channel-health --limit 10
+axonhub-client --json inventory summary
+axonhub-client --json channels list
+axonhub-client --json models list
+axonhub-client --json api-keys list --status enabled
+axonhub-client --json diagnostics channel-health --limit 10
 ```
 
 创建或修改资源时，命令默认只预览将要执行的操作，不会直接修改 AxonHub。确认无误后，再追加 `--confirm` 执行真实变更：
 
 ```powershell
-axonhubclient channels create `
+axonhub-client channels create `
   --type openai `
   --name "openai-main" `
   --upstream-base-url "https://api.openai.com/v1" `
   --api-key "sk-..." `
   --tag prod
 
-axonhubclient channels create `
+axonhub-client channels create `
   --type openai `
   --name "openai-main" `
   --upstream-base-url "https://api.openai.com/v1" `
@@ -91,6 +94,17 @@ axonhubclient channels create `
 ```
 
 更多命令、参数和输入文件格式见 [使用说明](docs/使用说明.md)。
+
+## 发布
+
+发布由 GitHub Actions 手动完成，不通过 tag 触发：
+
+1. 更新 `pyproject.toml` 中的 `version`。
+2. 合并到默认分支。
+3. 在 GitHub Actions 页面手动运行 `Release` workflow。
+4. workflow 会发布 PyPI 包，并创建 `vX.Y.Z` tag、GitHub Release 和 Windows x64 便携 zip。
+
+PyPI 使用 Trusted Publishing。首次发布前，需要在 PyPI 项目设置中为本仓库的 `Release` workflow 配置信任关系。
 
 ## Python Client
 
@@ -120,3 +134,4 @@ channels = client.channels.list(first=20)
 ## 许可证
 
 本项目使用 Apache License 2.0，详见 [LICENSE](LICENSE)。
+

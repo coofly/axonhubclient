@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="axonhubclient", description="AxonHub Admin API 管理客户端")
+    parser = argparse.ArgumentParser(prog="axonhub-client", description="AxonHub Admin API 管理客户端")
     parser.add_argument(
         "--context-project-id",
         dest="context_project_id",
@@ -705,4 +705,3 @@ def _add_time_window_command(
     cmd = actions.add_parser(name)
     cmd.add_argument("--window", choices=["day", "week", "month", "allTime"])
     cmd.set_defaults(handler=handler)
-
