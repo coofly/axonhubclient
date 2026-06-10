@@ -62,7 +62,7 @@ jobs:
 
   windows-zip:
     name: Build Windows x64 zip
-    runs-on: windows-2025
+    runs-on: windows-2025-vs2026
     outputs:
       version: ${{ steps.version.outputs.version }}
 
