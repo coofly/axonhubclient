@@ -35,6 +35,7 @@ jobs:
         uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
+          cache-suffix: node24-v1
 
       - name: Install dependencies
         run: uv sync --extra dev --frozen
@@ -61,7 +62,7 @@ jobs:
 
   windows-zip:
     name: Build Windows x64 zip
-    runs-on: windows-latest
+    runs-on: windows-2025
     outputs:
       version: ${{ steps.version.outputs.version }}
 
@@ -86,6 +87,7 @@ jobs:
         uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
+          cache-suffix: node24-v1
 
       - name: Install dependencies
         run: uv sync --extra dev --frozen
