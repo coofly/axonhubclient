@@ -53,6 +53,12 @@ uv tool install --editable .
 axonhubclient auth login --url https://your-axonhub.example.com --username admin@example.com
 ```
 
+上面的命令会继续提示输入密码，密码输入不会回显。需要非交互登录时，可以显式传入 `--password`：
+
+```powershell
+axonhubclient auth login --url https://your-axonhub.example.com --username admin@example.com --password "your-password"
+```
+
 `auth login` 也可以不传参数，按提示交互式输入实例地址、用户名和密码。
 
 常用盘点命令：
@@ -65,7 +71,7 @@ axonhubclient --json api-keys list --status enabled
 axonhubclient --json diagnostics channel-health --limit 10
 ```
 
-创建或修改资源时，先查看 dry-run 输出，再追加 `--confirm` 执行真实变更：
+创建或修改资源时，命令默认只预览将要执行的操作，不会直接修改 AxonHub。确认无误后，再追加 `--confirm` 执行真实变更：
 
 ```powershell
 axonhubclient channels create `
@@ -103,13 +109,13 @@ channels = client.channels.list(first=20)
 
 ## 安全说明
 
-- 写操作默认 dry-run；传入 `--confirm` 才提交真实 mutation。
-- CLI 输出会对常见敏感字段二次脱敏。
-- 渠道查询不请求 `Channel.credentials`。
-- 渠道查询不请求 disabled API key 明文字段。
-- API Key / Profile 盘点不请求明文字段 `key`。
-- `auth login` 不保存密码，默认不打印 token。
-- 渠道测试和渠道内 API key 测试会真实请求上游接口，可能消耗额度，因此也需要显式确认。
+- 创建、修改、删除等操作默认只预览，不会直接修改 AxonHub；传入 `--confirm` 后才会执行。
+- 命令输出会自动遮盖常见敏感信息，例如 API key、token 和密码。
+- 查询渠道时不会读取渠道中保存的上游密钥配置。
+- 查询已禁用的渠道密钥时不会读取密钥明文。
+- 查看 AxonHub API Key / Profile 信息时不会读取 API key 明文。
+- `auth login` 不保存密码，默认也不会打印登录 token。
+- 测试渠道和测试渠道内 API key 会真实请求上游服务，可能消耗额度，因此也需要显式确认。
 
 ## 许可证
 
