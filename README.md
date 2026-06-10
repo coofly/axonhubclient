@@ -4,7 +4,7 @@
 
 当前阶段已经从“只读资产盘点”推进到“资产盘点 + 安全受控写操作”的管理闭环。读操作可直接执行；写操作默认 dry-run，必须显式传入统一确认参数 `--confirm` 才会提交真实 mutation。删除、清理 disabled key 等高风险操作仍只使用 `--confirm`，但 dry-run 输出会明确标记不可逆或高风险影响。
 
-完整命令、参数、安全确认和示例输入文件见 [`docs/axonhubclient-CLI参考.md`](docs/axonhubclient-CLI参考.md)。示例 JSON 位于 [`docs/examples/`](docs/examples/)。
+完整命令、参数、安全确认和示例输入文件见 [`docs/使用说明.md`](docs/使用说明.md)。示例 JSON 位于 [`docs/examples/`](docs/examples/)。
 
 - `auth status|login|logout|whoami`
 - `channels list|get|summary|tags|count-by-type|create|create-many|import|update|status|enable|disable|reorder|endpoints set|test|keys test|keys disable|keys enable|keys enable-all|keys enable-selected|keys prune-disabled|models sync|archive|recover|delete`
@@ -91,11 +91,11 @@ axonhubclient channels create `
 常见渠道写操作：
 
 ```powershell
-axonhubclient channels create-many --input-file docs\examples\channel.bulk-create.json --confirm
-axonhubclient channels import --input-file docs\examples\channels.import.json --confirm
+axonhubclient channels create-many docs\examples\channel.bulk-create.json --confirm
+axonhubclient channels import docs\examples\channels.import.json --confirm
 axonhubclient channels update <channel-id> --input-file docs\examples\channel.update.json --confirm
 axonhubclient channels status <channel-id> enabled --confirm
-axonhubclient channels reorder --input-file docs\examples\channel.bulk-ordering.json --confirm
+axonhubclient channels reorder docs\examples\channel.bulk-ordering.json --confirm
 axonhubclient channels endpoints set <channel-id> --endpoints-file docs\examples\channel.endpoints.json --confirm
 axonhubclient channels models sync <channel-id> --pattern "gpt-.*" --confirm
 ```
