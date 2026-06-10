@@ -1,0 +1,8 @@
+{
+  "type": "model",
+  "priority": 0,
+  "disabled": false,
+  "modelId": {
+    "modelId": "gpt-4o-mini"
+  }
+}

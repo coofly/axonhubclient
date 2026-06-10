@@ -1,0 +1,33 @@
+[
+  {
+    "type": "openai",
+    "name": "example-openai-main",
+    "baseURL": "https://api.openai.com/v1",
+    "apiKey": "REPLACE_WITH_AUTHORIZED_UPSTREAM_KEY",
+    "supportedModels": [
+      "gpt-4o-mini"
+    ],
+    "defaultTestModel": "gpt-4o-mini",
+    "tags": [
+      "example",
+      "main"
+    ],
+    "orderingWeight": 100,
+    "remark": "示例：导入单条渠道"
+  },
+  {
+    "type": "openai",
+    "name": "example-openai-backup",
+    "baseURL": "https://api.openai.com/v1",
+    "apiKey": "REPLACE_WITH_AUTHORIZED_BACKUP_KEY",
+    "supportedModels": [
+      "gpt-4o-mini"
+    ],
+    "defaultTestModel": "gpt-4o-mini",
+    "tags": [
+      "example",
+      "backup"
+    ],
+    "orderingWeight": 50
+  }
+]

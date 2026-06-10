@@ -1,0 +1,8 @@
+[
+  {
+    "apiFormat": "openai",
+    "path": "/v1/chat/completions",
+    "baseURL": "https://api.openai.com/v1",
+    "transport": "http"
+  }
+]

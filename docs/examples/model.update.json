@@ -1,0 +1,31 @@
+{
+  "remark": "示例：更新模型备注并替换部分模型卡片字段",
+  "modelCard": {
+    "reasoning": {
+      "supported": false,
+      "default": false
+    },
+    "toolCall": true,
+    "temperature": true,
+    "modalities": {
+      "input": [
+        "text",
+        "image"
+      ],
+      "output": [
+        "text"
+      ]
+    },
+    "cost": {
+      "input": 0.15,
+      "output": 0.6,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "limit": {
+      "context": 128000,
+      "output": 16384
+    },
+    "lastUpdated": "2024-10-01"
+  }
+}

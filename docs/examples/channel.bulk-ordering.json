@@ -1,0 +1,10 @@
+[
+  {
+    "id": "channel-entity-id-1",
+    "orderingWeight": 200
+  },
+  {
+    "id": "channel-entity-id-2",
+    "orderingWeight": 100
+  }
+]

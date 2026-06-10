@@ -1,0 +1,9 @@
+{
+  "name": "example-openai-main-renamed",
+  "tags": [
+    "example",
+    "production"
+  ],
+  "orderingWeight": 120,
+  "remark": "示例：更新渠道名称、标签、排序权重和备注"
+}

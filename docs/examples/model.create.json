@@ -1,0 +1,53 @@
+{
+  "developer": "openai",
+  "modelID": "gpt-4o-mini",
+  "type": "chat",
+  "name": "GPT-4o mini",
+  "icon": "OpenAI",
+  "group": "openai",
+  "modelCard": {
+    "reasoning": {
+      "supported": false,
+      "default": false
+    },
+    "toolCall": true,
+    "temperature": true,
+    "modalities": {
+      "input": [
+        "text",
+        "image"
+      ],
+      "output": [
+        "text"
+      ]
+    },
+    "vision": true,
+    "cost": {
+      "input": 0.15,
+      "output": 0.6,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "limit": {
+      "context": 128000,
+      "output": 16384
+    },
+    "knowledge": "2024-10",
+    "releaseDate": "2024-07-18",
+    "lastUpdated": "2024-10-01"
+  },
+  "settings": {
+    "disableDeveloperSettingsInheritance": false,
+    "associations": [
+      {
+        "type": "model",
+        "priority": 0,
+        "disabled": false,
+        "modelId": {
+          "modelId": "gpt-4o-mini"
+        }
+      }
+    ]
+  },
+  "remark": "示例：创建模型配置。CreateModelInput 不支持 status。"
+}

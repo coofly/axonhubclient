@@ -1,0 +1,77 @@
+# AxonHubClient 项目看板
+
+最后更新：2026-06-11
+
+## 使用规则
+
+- 新任务先放入 `待办`。
+- 开始处理时移入 `进行中`。
+- 遇到外部依赖或信息不足时移入 `阻塞`。
+- 完成后移入 `已完成`，只保留简短结果说明。
+- 每次更新只移动条目，不重复写长说明。
+- 待办按优先级分为 `P0` / `P1` / `P2`，同一优先级内可按依赖顺序推进。
+
+## 待办
+
+### P2：组织和系统管理
+
+- 项目只读盘点：`projects list|get`、项目 API Key / 用量概览
+- 用户和角色只读盘点：`users list|get`、`roles list|get`、权限 scope 展示
+- 项目、用户、角色写操作：创建、更新、启停、项目成员关系管理，默认 dry-run
+- 系统配置只读盘点：品牌、存储、重试、Webhook、模型设置、Quota、安全设置
+- 高影响系统操作设计：backup、restore、cache cleanup、GC cleanup，只先做方案和风险分级
+
+### P2：工具化与 Agent 配套能力
+
+- Agent / Skill 使用说明：让 Agent 优先走 `AxonHubClient` CLI / Python client，浏览器只做辅助验证
+- 示例数据与 fixtures：渠道导入、模型批量创建、排序权重、endpoint 保存等 JSON 样例
+- 包发布准备：入口脚本、版本号、README、测试矩阵和本地安装说明
+
+## 进行中
+
+- 无
+
+## 阻塞
+
+### 待确认
+
+- 是否把路由与成本优化作为近期重点：`routing inspect`、`routing suggest --goal lowest-cost|balanced`
+- 是否开放 API Key / Profile 写操作：创建、更新、启停、归档、Profile 绑定
+- 是否研究并开放 API Key rotate / 删除能力
+- 是否需要 Thread / execution 只读命令，或先只做 requests 与 traces
+- 是否实现 OpenAPI service account 子客户端，还是继续只聚焦 Admin GraphQL
+
+## 已完成
+
+- 修复本地虚拟环境 CLI 入口生成：校正包发现与测试路径配置，重新同步后 `axonhubclient.exe` 可正常运行
+- CLI 全局化与命令名收敛：命令改为 `axonhubclient`，session 迁移到用户配置目录，移除 `--api-key-env` 并改用直接 key 参数；本地测试通过
+- Gemini 3 Flash Preview 关联规则明细只读查询：输出规则和命中的上游模型，未执行写入 mutation
+- 模型关联规则管理只读测试：本地测试通过；真实实例验证 `models rules list|preview|unassociated` 和 `--model-id` 查询，未执行写入 mutation
+- 修正 iKunCode 渠道类型：将 `gid://axonhub/Channel/14` 更新为 `openai_responses`，默认 endpoint 为 `openai/responses`
+- 真实添加 iKunCode 渠道：创建 `gid://axonhub/Channel/14`，baseURL 归一为 `https://api.ikuncode.cc/v1`，自动发现 6 个模型，状态为后端默认 `disabled`
+- 修复 CLI 自动发现模型误标为 `手动`：未传 `--manual-model` 时默认 `manualModels=[]`，完整测试通过
+- 调查渠道模型 `手动` tag 与自动同步逻辑：确认 `manualModels` 驱动前端徽标，当前 CLI 自动发现后误填 `manualModels`
+- 真实创建 `iKunCode` 渠道：创建 `gid://axonhub/Channel/13`，类型 `openai`，状态为后端默认 `disabled`
+- 修复 requests 自动获取 supportedModels：通过专用 requests TLS adapter 解决 iKunCode `/models` TLS EOF，移除外部 curl fallback
+- 渠道创建自动获取 supportedModels：`channels create` 支持省略 `--supported-model`，可从 OpenAI/NewAPI 兼容 `/models` 自动发现模型，并已用 iKunCode dry-run 验证
+- AxonHubClient 真实实例实测：登录成功；单元测试、直接 Python client 调用、CLI 核心只读查询、`smoke read-only` 和写命令 dry-run 验证通过
+- Session 登录改造：使用当前目录 `axonhub_session.json` 保存登录态，`auth login` 支持参数和交互登录，session 失效时提示重新登录
+- AxonHubClient 本地实测：本地测试通过；CLI 帮助、默认 dry-run、脱敏输出、无配置错误和 mock HTTP smoke read-only 验证通过
+- 构建 `AxonHubClient` 基础 client 与 CLI
+- 渠道只读盘点接口
+- 渠道写操作：`create`、`create-many`、`import`、`update`、`status`、`enable`、`disable`、`reorder`、`endpoints set`、`test`、`models sync`、`archive`、`recover`、`delete`
+- 渠道 API Key 管理写操作：`keys disable`、`keys enable`、`keys enable-all`、`keys enable-selected`、`keys prune-disabled`，默认 dry-run，写操作统一 `--confirm`
+- 渠道 API Key 状态管理安全设计与文档同步
+- 项目文档阶段定位同步：从“第一阶段只读”更新为“只读盘点 + 默认 dry-run 的安全管理闭环”
+- 模型只读增强：`models get`、`models rules preview`、`models rules unassociated`、`models fastest`
+- 模型核心写操作：`create`、`create-many`、`update`、`status`、`enable`、`disable`、`archive`、`recover`、`delete`，默认 dry-run，写操作统一 `--confirm`
+- 模型关联规则基础接口：`models rules list` 读取 `settings.associations`，`models rules replace` 整组替换关联规则并保留其它 settings 字段
+- 模型关联规则细粒度编辑：`models rules add/remove/enable/disable/reorder`，按 1-based 索引编辑并自动归一化 `priority`
+- Inventory 汇总命令：`inventory summary` 聚合渠道、模型、用量、渠道成功率和异常状态，便于 Agent 先盘点实例
+- CLI 参考文档：按资源补齐命令、参数、安全确认和示例输入文件，示例 JSON 位于 `docs/examples/`
+- API Key / Profile 只读盘点：`api-keys list|get|quota|templates`，查询不选择明文 `key` 字段，列表默认排除 `noauth`
+- P1 运维排障能力：补齐 `requests`、`usage logs`、`traces` 只读命令、渠道健康诊断和只读 smoke test 流程
+- CLI 接口收敛：破坏式统一命名、筛选参数、dry-run 输出和 `--confirm` 确认方式
+- 安全测试与文档同步
+- 将 `pytest` 纳入项目开发依赖
+- 根据项目现状拆分后续开发任务并更新看板

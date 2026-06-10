@@ -1,0 +1,21 @@
+[
+  {
+    "type": "model",
+    "priority": 0,
+    "disabled": false,
+    "modelId": {
+      "modelId": "gpt-4o-mini"
+    }
+  },
+  {
+    "type": "channel_tags_model",
+    "priority": 1,
+    "disabled": false,
+    "channelTagsModel": {
+      "channelTags": [
+        "backup"
+      ],
+      "modelId": "gpt-4o-mini"
+    }
+  }
+]
