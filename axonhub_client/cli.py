@@ -22,6 +22,7 @@ SESSION_FILENAME = "session.json"
 
 
 def main(argv: list[str] | None = None) -> int:
+    _ensure_unicode_stdio()
     parser = build_parser()
     args = parser.parse_args(argv)
     if not hasattr(args, "handler"):
@@ -40,6 +41,21 @@ def main(argv: list[str] | None = None) -> int:
         message = SESSION_RELOGIN_MESSAGE if not _is_no_client_command(args) and is_auth_error(exc) else str(exc)
         print(f"错误：{message}", file=sys.stderr)
         return 1
+
+
+def _ensure_unicode_stdio() -> None:
+    for stream_name in ("stdout", "stderr"):
+        stream = getattr(sys, stream_name)
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        encoding = (getattr(stream, "encoding", None) or "").lower()
+        if encoding == "utf-8":
+            continue
+        try:
+            reconfigure(encoding="utf-8")
+        except (AttributeError, OSError, ValueError):
+            pass
 
 
 def build_parser() -> argparse.ArgumentParser:

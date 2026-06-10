@@ -2,7 +2,7 @@ import json
 import unittest
 from argparse import Namespace
 from contextlib import redirect_stderr
-from io import StringIO
+from io import BytesIO, StringIO, TextIOWrapper
 from unittest.mock import patch
 
 from axonhub_client import queries
@@ -36,6 +36,20 @@ from tests.cli_fakes import *
 
 
 class ChannelCLITest(unittest.TestCase):
+    def test_help_output_reconfigures_non_utf8_stream(self):
+        stdout_buffer = BytesIO()
+        stdout = TextIOWrapper(stdout_buffer, encoding="cp1252")
+        stderr_buffer = BytesIO()
+        stderr = TextIOWrapper(stderr_buffer, encoding="cp1252")
+
+        with patch("sys.stdout", stdout), patch("sys.stderr", stderr):
+            with self.assertRaises(SystemExit) as raised:
+                main(["--help"])
+            stdout.flush()
+
+        self.assertEqual(raised.exception.code, 0)
+        self.assertIn("AxonHub Admin API 管理客户端", stdout_buffer.getvalue().decode("utf-8"))
+
     def test_build_create_channel_input_from_api_key_args(self):
         args = Namespace(
             type="openai",
