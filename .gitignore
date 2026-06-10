@@ -14,6 +14,7 @@ htmlcov/
 .env.*
 !.env.example
 AGENTS.md
+docs/axonhub-探索笔记.md
 login.local.json
 axonhub_session.json
 session.json
