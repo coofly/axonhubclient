@@ -95,17 +95,6 @@ axonhub-client channels create `
 
 更多命令、参数和输入文件格式见 [使用说明](docs/使用说明.md)。
 
-## 发布
-
-发布由 GitHub Actions 手动完成，不通过 tag 触发：
-
-1. 更新 `pyproject.toml` 中的 `version`。
-2. 合并到默认分支。
-3. 在 GitHub Actions 页面手动运行 `Release` workflow。
-4. workflow 会发布 PyPI 包，并创建 `vX.Y.Z` tag、GitHub Release 和 Windows x64 便携 zip。
-
-PyPI 使用 Trusted Publishing。首次发布前，需要在 PyPI 项目设置中为本仓库的 `Release` workflow 配置信任关系。
-
 ## Python Client
 
 也可以在 Python 代码中直接使用 client：
