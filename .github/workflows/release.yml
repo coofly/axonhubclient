@@ -35,7 +35,7 @@ jobs:
         uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
-          cache-suffix: node24-v1
+          cache-suffix: node24-${{ runner.os }}-python-3.13-v2
 
       - name: Install dependencies
         run: uv sync --extra dev --frozen
@@ -54,7 +54,7 @@ jobs:
         run: uv build
 
       - name: Upload Python dist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-dist
           path: dist/*
@@ -87,7 +87,7 @@ jobs:
         uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
-          cache-suffix: node24-v1
+          cache-suffix: node24-${{ runner.os }}-python-3.13-v2
 
       - name: Install dependencies
         run: uv sync --extra dev --frozen
@@ -100,7 +100,7 @@ jobs:
           "version=$version" >> $env:GITHUB_OUTPUT
 
       - name: Build executable
-        run: uv run --with pyinstaller pyinstaller --name axonhub-client --console --onedir axonhub_client/__main__.py
+        run: uv run --with pyinstaller pyinstaller --name axonhub-client --console --onedir --specpath build axonhub_client/__main__.py
 
       - name: Add release notes to portable directory
         shell: pwsh
@@ -137,7 +137,7 @@ jobs:
           smoke-zip\axonhub-client.exe --help
 
       - name: Upload Windows zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-zip
           path: dist/axonhub-client-windows-x64-v*.zip
@@ -171,13 +171,13 @@ jobs:
           fi
 
       - name: Download Python dist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: python-dist
           path: dist
 
       - name: Download Windows zip
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: windows-zip
           path: release-assets

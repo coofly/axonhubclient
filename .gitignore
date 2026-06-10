@@ -8,6 +8,7 @@ __pycache__/
 *.py[cod]
 build/
 dist/
+/axonhub-client.spec
 htmlcov/
 .coverage
 .env
