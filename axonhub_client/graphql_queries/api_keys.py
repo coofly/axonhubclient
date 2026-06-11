@@ -36,6 +36,7 @@ name
 type
 status
 scopes
+projectID
 profiles {{
   activeProfile
   profiles {{
@@ -61,6 +62,7 @@ query GetAPIKeys(
         type
         status
         scopes
+        projectID
       }
       cursor
     }
@@ -148,4 +150,3 @@ query APIKeyProfileTemplates($first: Int, $where: APIKeyProfileTemplateWhereInpu
   }}
 }}
 """
-

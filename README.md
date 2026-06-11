@@ -11,6 +11,7 @@
 ## 适用场景
 
 - 查看 AxonHub 实例中的渠道、模型、用量和请求状态。
+- 按 AxonHub Project 盘点 API Key / Profile、请求、用量日志和 Trace。
 - 批量导入、创建、更新、启停或排序渠道。
 - 管理模型和模型关联规则。
 - 检查渠道健康状态、请求日志、用量日志和 Trace。
@@ -77,8 +78,11 @@ axonhub-client --json inventory summary
 axonhub-client --json channels list
 axonhub-client --json models list
 axonhub-client --json api-keys list --status enabled
+axonhub-client --project <project-id> --json requests list --first 20
 axonhub-client --json diagnostics channel-health --limit 10
 ```
+
+`--project <project-id>` 是全局参数，专指 AxonHub Project。它会作为 `X-Project-ID` 请求上下文，并用于 API Key / Profile、请求、用量日志和 Trace 等项目归属资源的列表过滤。
 
 创建或修改资源时，命令默认只预览将要执行的操作，不会直接修改 AxonHub。确认无误后，再追加 `--confirm` 执行真实变更：
 

@@ -116,7 +116,7 @@ def _make_client(args: argparse.Namespace) -> AxonHubClient:
         session["baseUrl"].strip(),
         admin_token=session["token"].strip(),
         timeout=args.timeout,
-        project_id=args.context_project_id,
+        project_id=args.project_id,
     )
 
 

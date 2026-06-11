@@ -104,6 +104,10 @@ class QuerySafetyAndSessionTest(unittest.TestCase):
             self.assertNotIn("password", query)
             _assert_field_not_selected(self, query, "key")
 
+    def test_api_key_queries_select_project_id(self):
+        self.assertIn("projectID", queries.API_KEYS)
+        self.assertIn("projectID", queries.GET_API_KEY)
+
     def test_request_get_default_does_not_select_content_fields(self):
         for field in ("requestHeaders", "requestBody", "responseBody", "responseChunks"):
             _assert_field_not_selected(self, queries.GET_REQUEST, field)
@@ -216,7 +220,7 @@ class QuerySafetyAndSessionTest(unittest.TestCase):
             self.assertFalse((config_dir / SESSION_FILENAME).exists())
 
     def test_make_client_reads_session_file(self):
-        args = Namespace(timeout=12, context_project_id="project-1")
+        args = Namespace(timeout=12, project_id="project-1")
 
         with TempConfig():
             save_session(

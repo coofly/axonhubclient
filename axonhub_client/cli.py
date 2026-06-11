@@ -60,11 +60,7 @@ def _ensure_unicode_stdio() -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="axonhub-client", description="AxonHub Admin API 管理客户端")
-    parser.add_argument(
-        "--context-project-id",
-        dest="context_project_id",
-        help="可选的 X-Project-ID 请求上下文",
-    )
+    parser.add_argument("--project", dest="project_id", help="可选的 AxonHub Project ID，同时作为 X-Project-ID 请求上下文")
     parser.add_argument("--timeout", type=float, default=30, help="请求超时时间，单位秒")
     parser.add_argument("--json", action="store_true", help="以 JSON 输出完整响应")
 
@@ -340,7 +336,6 @@ def _add_api_key_commands(subparsers: argparse._SubParsersAction) -> None:
     list_cmd.add_argument("--status", choices=["enabled", "disabled", "archived"])
     list_cmd.add_argument("--type", dest="type_", choices=["user", "service_account", "noauth"])
     list_cmd.add_argument("--name", help="按名称模糊筛选")
-    list_cmd.add_argument("--project-id", help="按项目 ID 筛选")
     list_cmd.add_argument("--user-id", help="按用户 ID 筛选")
     list_cmd.set_defaults(
         handler=lambda client, args: client.api_keys.list(
@@ -364,7 +359,6 @@ def _add_api_key_commands(subparsers: argparse._SubParsersAction) -> None:
 
     templates_cmd = actions.add_parser("templates", help="读取 API Key Profile 模板")
     templates_cmd.add_argument("--first", type=int, default=100)
-    templates_cmd.add_argument("--project-id", help="按项目 ID 筛选")
     templates_cmd.add_argument("--name", help="按名称模糊筛选")
     templates_cmd.set_defaults(
         handler=lambda client, args: client.api_keys.profile_templates(
@@ -619,7 +613,6 @@ def _add_trace_commands(subparsers: argparse._SubParsersAction) -> None:
     list_cmd.add_argument("--trace-id")
     list_cmd.add_argument("--thread-id")
     list_cmd.add_argument("--request-id")
-    list_cmd.add_argument("--project-id")
     list_cmd.add_argument("--created-after", help="ISO/RFC3339 时间，映射到 createdAtGTE")
     list_cmd.add_argument("--created-before", help="ISO/RFC3339 时间，映射到 createdAtLTE")
     list_cmd.set_defaults(
@@ -703,7 +696,6 @@ def _add_log_list_filters(
         cmd.set_defaults(statuses=None)
     cmd.add_argument("--source", action="append", dest="sources")
     cmd.add_argument("--channel-id")
-    cmd.add_argument("--project-id")
     cmd.add_argument("--model")
     if include_trace:
         cmd.add_argument("--trace-id")

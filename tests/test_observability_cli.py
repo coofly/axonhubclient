@@ -40,6 +40,8 @@ class ObservabilityCLITest(unittest.TestCase):
         parser = build_parser()
         args = parser.parse_args(
             [
+                "--project",
+                "project-1",
                 "api-keys",
                 "list",
                 "--first",
@@ -52,8 +54,6 @@ class ObservabilityCLITest(unittest.TestCase):
                 "service_account",
                 "--name",
                 "prod",
-                "--project-id",
-                "project-1",
                 "--user-id",
                 "user-1",
             ]
@@ -93,7 +93,7 @@ class ObservabilityCLITest(unittest.TestCase):
         for argv in (
             ["api-keys", "get", "api-key-1"],
             ["api-keys", "quota", "api-key-1"],
-            ["api-keys", "templates", "--first", "25", "--project-id", "project-1", "--name", "default"],
+            ["--project", "project-1", "api-keys", "templates", "--first", "25", "--name", "default"],
         ):
             args = parser.parse_args(argv)
             args.handler(client, args)
@@ -106,6 +106,8 @@ class ObservabilityCLITest(unittest.TestCase):
 
         args = parser.parse_args(
             [
+                "--project",
+                "project-1",
                 "requests",
                 "list",
                 "--first",
@@ -118,8 +120,6 @@ class ObservabilityCLITest(unittest.TestCase):
                 "api",
                 "--channel-id",
                 "channel-1",
-                "--project-id",
-                "project-1",
                 "--model",
                 "gpt-4o-mini",
                 "--trace-id",
@@ -174,6 +174,8 @@ class ObservabilityCLITest(unittest.TestCase):
 
         args = parser.parse_args(
             [
+                "--project",
+                "project-1",
                 "usage",
                 "logs",
                 "list",
@@ -185,8 +187,6 @@ class ObservabilityCLITest(unittest.TestCase):
                 "api",
                 "--channel-id",
                 "channel-1",
-                "--project-id",
-                "project-1",
                 "--model",
                 "gpt-4o-mini",
             ]
@@ -222,6 +222,8 @@ class ObservabilityCLITest(unittest.TestCase):
 
         args = parser.parse_args(
             [
+                "--project",
+                "project-1",
                 "traces",
                 "list",
                 "--first",
@@ -232,8 +234,6 @@ class ObservabilityCLITest(unittest.TestCase):
                 "thread-1",
                 "--request-id",
                 "request-1",
-                "--project-id",
-                "project-1",
                 "--created-after",
                 "2026-06-01T00:00:00Z",
                 "--created-before",
